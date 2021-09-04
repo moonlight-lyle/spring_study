@@ -1,0 +1,8 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<beans>
+
+    <!--id属性，作为接口/类的唯一标识，不能重复(一般可以写接口/类的名字,首字母小写)
+    class属性：写类的全路径名称，例如：com.it.dao.UserDao，以便反射创建对象-->
+    <bean id="userDao" class="com.it.dao.impl.UserDaoMybatis"></bean>
+    <bean id="userService" class="com.it.service.impl.UserService"></bean>
+</beans>

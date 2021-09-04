@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--通过bean标签配置对象 把对象交给Spring管理
+       1.掌握的属性
+           id/name属性: 作为bean标签的唯一标识, 随便取, 不要重复就可以【一般使用接口/类的名字, 首字母小写】
+           class属性: 类的全限定名
+           scope属性: 配置bean的类型的
+                           singleton 单例的【默认】, Spring把创建的对象存到Spring容器里面
+                           prototype 多例的, 创建好之后, 不会存的Spring容器
+
+                           request   把创建的对象存到request域
+                           session   把创建的对象存到session域
+      2.了解的属性
+           init-method属性: 初始化监听, 当被Spring创建的时候, 会调用这个方法
+           destroy-method属性: 销毁监听, 当被Spring从容器移除,Spring容器销毁, 会调用这个方法(不适合多例情况)
+   -->
+
+    <!--注册Service-->
+    <bean id="accountService" class="com.it.service.impl.AccountServiceImpl" scope="singleton" init-method="initMethod"
+          destroy-method="destroyMethod"></bean>
+    <!--注册Dao-->
+    <bean id="accountDao" class="com.it.dao.impl.AccountDaoImpl"></bean>
+
+    <!--方式二: 静态工厂  class:写工厂类的全限定名  factory-method:工厂类里面的方法名 【了解】-->
+    <bean id="accountService02" class="com.it.utils.StaticFactory" factory-method="getBean"></bean>
+
+    <!--方式三: 实例化工厂  【了解】-->
+    <bean id="instanceFactory" class="com.it.utils.InstanceFactory"></bean>
+    <bean id="accountService03" factory-bean="instanceFactory" factory-method="getBean"></bean>
+
+</beans>

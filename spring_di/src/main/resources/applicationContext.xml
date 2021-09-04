@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--一,通过构造方法方式-->
+    <bean id="accountService" class="com.it.service.impl.AccountServiceImpl">
+        <constructor-arg name="username" value="张三"></constructor-arg>
+        <constructor-arg name="age" value="18"></constructor-arg>
+        <!--注入对象-->
+        <constructor-arg name="user" ref="u1"></constructor-arg>
+    </bean>
+
+    <bean id="u1" class="com.it.bean.User">
+        <property name="username" value="小红红"></property>
+        <property name="password" value="123456"></property>
+        <property name="age" value="20"></property>
+    </bean>
+
+    <!--二,通过Set方法方式-->
+    <!--2.1 注入简单类型-->
+    <bean id="accountService02" class="com.it.service.impl.AccountServiceImpl02">
+        <!--name: 写属性名(去掉set 首字母变小写)  value:赋值(基本类型,字符串)-->
+        <property name="username" value="李四"></property>
+        <property name="age" value="18"></property>
+    </bean>
+
+    <!--2.2 注入数组类型的-->
+    <bean id="accountService03" class="com.it.service.impl.AccountServiceImpl03">
+        <property name="hobby">
+            <array>
+                <value>篮球</value>
+                <value>足球</value>
+                <value>乒乓球</value>
+                <value>敲代码</value>
+            </array>
+        </property>
+    </bean>
+
+    <!--2.3 注入map类型-->
+    <bean id="accountService04" class="com.it.service.impl.AccountServiceImpl04">
+        <property name="map">
+            <map>
+                <entry key="akey" value="aaa"/>
+                <entry key="bkey" value="bbb"/>
+                <entry key="ckey" value="ccc"/>
+            </map>
+            <!--<props>
+                <prop key="akey">aaa</prop>
+                <prop key="bkey">bbb</prop>
+                <prop key="ckey">ccc</prop>
+            </props>-->
+        </property>
+    </bean>
+
+    <!--2.4 注入JavaBean对象类型-->
+    <!--注册Dao-->
+    <bean id="accountDao" class="com.it.dao.impl.AccountDaoImpl"></bean>
+
+    <bean id="accountService05" class="com.it.service.impl.AccountServiceImpl05">
+        <property name="accountDao" ref="accountDao"></property>
+    </bean>
+
+    <!--三 p名称空间
+    需要在上面的xml约束中加入：xmlns:p="http://www.springframework.org/schema/p"
+    -->
+    <bean id="accountService06" class="com.it.service.impl.AccountServiceImpl06" p:name="王五">
+    </bean>
+
+    <!--四, SpEL，可以获取上面注册的u1对象中的属性值并进行计算-->
+    <bean id="accountService07" class="com.it.service.impl.AccountServiceImpl07">
+        <property name="name" value="#{u1.username}"/>
+        <property name="age" value="#{u1.age*2}"/>
+    </bean>
+</beans>
