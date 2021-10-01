@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--注册Dao-->
+    <bean id="accountDao" class="com.it.dao.impl.AccountDaoImpl"></bean>
+
+    <!--注册增强逻辑的类-->
+    <bean id="myAscept" class="com.it.aspect.MyAscept"></bean>
+
+    <!--配置aop-->
+    <aop:config>
+        <!--配置切入点（即需要进行增强的方法）,id：作为唯一标识，不要重复，expression：表达式，通过该表达式找到需要增强的方法
+        For example : 'execution(* com.xyz.myapp.service.*.*(..))'
+        第一个*号：任意的返回值
+        第二个*号：com.xyz.myapp.service包下的任意类
+        第三个*号：com.xyz.myapp.service包下的任意类的任意方法
+        (..)：com.xyz.myapp.service包下的任意类的任意方法中的任意参数
+        综合：com.xyz.myapp.service包下所有类的所有方法都是切入点
+        -->
+        <!--前置通知切入点-->
+        <aop:pointcut id="pointcut01" expression="execution(* com.it.dao.impl.AccountDaoImpl.save(..))"/>
+        <!--后置通知切入点-->
+        <aop:pointcut id="pointcut02" expression="execution(* com.it.dao.impl.AccountDaoImpl.delete(..))"/>
+        <!--环绕通知切入点-->
+        <aop:pointcut id="pointcut03" expression="execution(* com.it.dao.impl.AccountDaoImpl.findAll(..))"/>
+        <!--异常通知切入点-->
+        <aop:pointcut id="pointcut04" expression="execution(* com.it.dao.impl.AccountDaoImpl.update(..))"/>
+        <!--最终通知切入点-->
+        <aop:pointcut id="pointcut05" expression="execution(* com.it.dao.impl.AccountDaoImpl.findById(..))"/>
+
+        <!--配置切面（就是让切入点和通知进行结合）,ref：就是从spring容器中找对应的增强类对象，此处例子是MyAscept-->
+        <aop:aspect ref="myAscept">
+            <!--配置通知，此处例子是前置通知，在所有save方法之前进行权限校验
+            method：增强逻辑，即增强类中的增强方法
+            pointcut-ref="pointcut01":需要进行增强的切入点，此处是save方法
+            -->
+            <!--前置通知配置-->
+            <aop:before method="checkPrivilege" pointcut-ref="pointcut01"></aop:before>
+            <!--后置通知配置
+            特点：可以获取目标方法的返回值，此处目标方法是delete
+            returning="obj":获取目标方法的返回值,obj与showLog()方法中的形参保持一致
+            -->
+            <aop:after-returning method="showLog" pointcut-ref="pointcut02" returning="obj"></aop:after-returning>
+
+            <!--环绕通知配置
+            特点：可以阻止目标方法执行，此处目标方法是findAll
+            -->
+            <aop:around method="showTime" pointcut-ref="pointcut03"></aop:around>
+
+            <!--异常通知配置
+            特点：可以获取到异常信息
+             throwing="e"，e与showException()方法中的形参保持一致
+            -->
+            <aop:after-throwing method="showException" pointcut-ref="pointcut04" throwing="e"></aop:after-throwing>
+
+            <!--最终通知配置,不管目标方法是否执行异常，增强逻辑都会执行-->
+            <aop:after method="showFinal" pointcut-ref="pointcut05"></aop:after>
+        </aop:aspect>
+    </aop:config>
+</beans>
