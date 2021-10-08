@@ -2,6 +2,7 @@ package com.it.dao.impl;
 
 import com.it.dao.AccountDao;
 import com.it.pojo.Account;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -14,17 +15,25 @@ import java.util.Map;
  * @date 2021/9/19
  */
 public class AccountDaoImpl implements AccountDao {
+
+    // 对象注入，在xml中进行配置
+    private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate=jdbcTemplate;
+    }
+
     @Override
     public void save(Account account) {
         //1. 创建数据源
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        //2. 创建JDBC模版
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        //2. 创建JDBC模版
+//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+//        jdbcTemplate.setDataSource(dataSource);
         //3.操作数据库
         String sql = "insert into account values(?,?,?)";
         jdbcTemplate.update(sql, null,account.getName(),account.getMoney());
@@ -32,14 +41,14 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void delete(int id) {
         //1. 创建数据源
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        //2. 创建JDBC模版
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        //2. 创建JDBC模版
+//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+//        jdbcTemplate.setDataSource(dataSource);
         //3.操作数据库
         String sql = "delete from account where id=?";
         jdbcTemplate.update(sql, id);
@@ -47,14 +56,14 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public List<Account> findAll() {
         //1. 创建数据源
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        //2. 创建JDBC模版
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        //2. 创建JDBC模版
+//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+//        jdbcTemplate.setDataSource(dataSource);
         //3.操作数据库
         String sql = "select * from account";
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
@@ -65,14 +74,14 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void update(Account account) {
         //1. 创建数据源
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        //2. 创建JDBC模版
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        //2. 创建JDBC模版
+//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+//        jdbcTemplate.setDataSource(dataSource);
         // 操作数据库
         String sql ="update account set name = ? where id = ?";
         Object[] objects = {account.getName(), account.getId()};
@@ -81,14 +90,14 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public Account findById(int id) {
         //1. 创建数据源
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        //2. 创建JDBC模版
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/spring_day01");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        //2. 创建JDBC模版
+//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+//        jdbcTemplate.setDataSource(dataSource);
         // 操作数据库
         String sql = "select * from account where id = ?";
         Account account = jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(Account.class),id);

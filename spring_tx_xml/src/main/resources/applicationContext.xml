@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--开启包扫苗-->
+    <context:component-scan base-package="com.it"></context:component-scan>
+
+    <!--注册bean-->
+    <bean id="userService" class="com.it.service.impl.UserServiceImpl"></bean>
+    <bean id="userDao" class="com.it.dao.impl.UserDaoImpl"></bean>
+
+    <!--注册jdbcTemplate-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--引入properties配置文件-->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+
+    <!--druid dataSource-->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
+        <property name="jdbcUrl" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+    
+    <!--********************** 事务开始 ******************************-->
+    <!--注册事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--配置事务建议
+    id:随便取名字，作为唯一标识
+    transaction-manager="transactionManager":配置事务管理器，配置之前需要先注册事务管理器
+    -->
+    <tx:advice id="adviceId01" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 
+            name="":写方法名，如果写*号，标识匹配所有方法
+            isolation=""：配置隔离级别（不配置则默认数据库的隔离级别）
+            rollback-for="":配置回滚的异常（也就是说遇到什么异常才进行回滚），如果不配置，则所有异常都进行回滚
+            timeout="-1"：配置事务超时时间，如果超时会报错，-1表示永不超时
+            read-only="true"：配置事务只读，如果是true，则增删改会报错
+            propagation="REQUIRED":Spring默认的事务传播行为，也是最常用的
+                如果当前没有事务，就新建一个事务，
+                如果已经存在一个事务中，加入到这个事务中
+            -->
+            <tx:method name="*" isolation="REPEATABLE_READ" timeout="-1" read-only="false" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--配置Aop-->
+    <aop:config>
+        <!--配置切入点-->
+        <!-- <aop:pointcut id="pointcut01" expression="execution(* com.it.dao.impl.AccountDaoImpl.save(..))"/>-->
+        <aop:pointcut id="pointcut01" expression="execution(* com.it.service.impl.*.*(..))"></aop:pointcut>
+        <!--配置切面-->
+        <aop:advisor advice-ref="adviceId01" pointcut-ref="pointcut01"></aop:advisor>
+    </aop:config>
+    <!--********************** 事务结束 ******************************-->
+
+</beans>
